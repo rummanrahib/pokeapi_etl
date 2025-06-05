@@ -56,8 +56,8 @@ class PokemonETLCoordinator:
                 total_pokemon = len(pokemon_list)
                 
                 logger.info(
-                    f"Starting to process {total_pokemon} Pokemon "
-                    f"with batch size {batch_size}"
+                    f'Starting to process {total_pokemon} Pokemon '
+                    f'with batch size {batch_size}'
                 )
                 
                 # processing batches in parallel
@@ -78,7 +78,7 @@ class PokemonETLCoordinator:
                         try:
                             future.result()
                         except Exception as e:
-                            logger.error(f"Batch processing failed: {e}")
+                            logger.error(f'Batch processing failed: {e}')
                 
                 # retrying failed Pokemon if flag is set to true
                 if retry_failed and self.stats.failed_ids:
@@ -91,8 +91,8 @@ class PokemonETLCoordinator:
                 return self.stats
                 
         except Exception as e:
-            logger.error(f"Critical error in Pokemon ETL process: {e}")
-            raise ETLError(f"ETL process failed: {str(e)}")
+            logger.error(f'Critical error in Pokemon ETL process: {e}')
+            raise ETLError(f'ETL process failed: {str(e)}')
             
         finally:
             self.loader.clear_caches()
@@ -103,7 +103,7 @@ class PokemonETLCoordinator:
         batch: List[Dict[str, Any]],
         batch_num: int
     ) -> None:
-        logger.info(f"Starting batch {batch_num} with {len(batch)} Pokemon")
+        logger.info(f'Starting batch {batch_num} with {len(batch)} Pokemon')
         batch_start = time.time()
         
         for pokemon_entry in batch:
@@ -117,13 +117,13 @@ class PokemonETLCoordinator:
                 
             except Exception as e:
                 logger.error(
-                    f"Failed to process Pokemon {pokemon_entry['name']} "
-                    f"(ID: {pokemon_id}): {e}"
+                    f'Failed to process Pokemon {pokemon_entry["name"]} '
+                    f'(ID: {pokemon_id}): {e}'
                 )
                 self.stats.record_failure(pokemon_id)
         
         batch_duration = time.time() - batch_start
-        logger.info(f"Completed batch {batch_num} in {batch_duration:.2f} seconds")
+        logger.info(f'Completed batch {batch_num} in {batch_duration:.2f} seconds')
     
     def _process_single_pokemon(
         self,
@@ -137,13 +137,13 @@ class PokemonETLCoordinator:
             transformed_data = self.transformer.transform_complete_pokemon_data(raw_data)
             self.loader.load_complete_pokemon_data(transformed_data)
             
-            logger.info(f"Successfully processed Pokemon: {pokemon_name}")
+            logger.info(f'Successfully processed Pokemon: {pokemon_name}')
             
         except (TransformationError, LoaderError) as e:
             if retry_count < self.MAX_RETRIES:
                 logger.warning(
-                    f"Retrying Pokemon {pokemon_name} "
-                    f"(attempt {retry_count + 1}/{self.MAX_RETRIES})"
+                    f'Retrying Pokemon {pokemon_name} '
+                    f'(attempt {retry_count + 1}/{self.MAX_RETRIES})'
                 )
                 time.sleep(self.RETRY_DELAY * (retry_count + 1))
                 self._process_single_pokemon(
@@ -159,7 +159,7 @@ class PokemonETLCoordinator:
         if not self.stats.failed_ids:
             return
         
-        logger.info(f"Retrying {len(self.stats.failed_ids)} failed Pokemon")
+        logger.info(f'Retrying {len(self.stats.failed_ids)} failed Pokemon')
         
         # reset failed stats for retry
         failed_ids = self.stats.failed_ids.copy()
@@ -176,25 +176,25 @@ class PokemonETLCoordinator:
                 self.stats.record_success()
                 
             except Exception as e:
-                logger.error(f"Retry failed for Pokemon ID {pokemon_id}: {e}")
+                logger.error(f'Retry failed for Pokemon ID {pokemon_id}: {e}')
                 self.stats.record_failure(pokemon_id)
     
     def _extract_pokemon_id(self, pokemon_entry: Dict[str, Any]) -> Optional[int]:
         try:
             return int(pokemon_entry['url'].split('/')[-2])
         except (KeyError, ValueError, IndexError) as e:
-            logger.error(f"Failed to extract Pokemon ID from entry: {e}")
+            logger.error(f'Failed to extract Pokemon ID from entry: {e}')
             return None
     
     def _log_completion_stats(self, duration: float) -> None:
         logger.info(
-            f"\nETL Process Completed:"
-            f"\n- Total Processed: {self.stats.total_processed}"
-            f"\n- Successful: {self.stats.successful}"
-            f"\n- Failed: {self.stats.failed}"
-            f"\n- Duration: {duration:.2f} seconds"
-            f"\n- Average Time Per Pokemon: {duration/self.stats.total_processed:.2f} seconds"
+            f'\nETL Process Completed:'
+            f'\n- Total Processed: {self.stats.total_processed}'
+            f'\n- Successful: {self.stats.successful}'
+            f'\n- Failed: {self.stats.failed}'
+            f'\n- Duration: {duration:.2f} seconds'
+            f'\n- Average Time Per Pokemon: {duration/self.stats.total_processed:.2f} seconds'
         )
         
         if self.stats.failed_ids:
-            logger.warning(f"Failed Pokemon IDs: {sorted(self.stats.failed_ids)}") 
+            logger.warning(f'Failed Pokemon IDs: {sorted(self.stats.failed_ids)}') 

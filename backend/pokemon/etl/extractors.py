@@ -21,7 +21,7 @@ def with_retry(func: Callable[..., T]) -> Callable[..., T]:
             except httpx.HTTPError as e:
                 if attempt == self.MAX_RETRIES - 1:
                     raise
-                logger.warning(f"Attempt {attempt + 1} failed: {str(e)}. Retrying...")
+                logger.warning(f'Attempt {attempt + 1} failed: {str(e)}. Retrying...')
     return wrapper
 
 class PokeAPIExtractor:
@@ -44,8 +44,8 @@ class PokeAPIExtractor:
         self.client = httpx.Client(
             timeout=self.REQUEST_TIMEOUT,
             headers={
-                "User-Agent": "Pokemon ETL Pipeline/1.0",
-                "Accept": "application/json"
+                'User-Agent': 'Pokemon ETL Pipeline/1.0',
+                'Accept': 'application/json'
             }
         )
         self._last_request_time = 0
@@ -61,7 +61,7 @@ class PokeAPIExtractor:
             path = urlparse(url).path.rstrip('/').split('/')
             return int(path[-1])
         except (ValueError, IndexError):
-            logger.error(f"Failed to extract ID from URL: {url}")
+            logger.error(f'Failed to extract ID from URL: {url}')
             return None
     
     @with_retry
@@ -79,10 +79,10 @@ class PokeAPIExtractor:
             return response.json()
             
         except httpx.HTTPError as e:
-            logger.error(f"HTTP error fetching {url}: {str(e)}")
+            logger.error(f'HTTP error fetching {url}: {str(e)}')
             raise
         except Exception as e:
-            logger.error(f"Error fetching {url}: {str(e)}")
+            logger.error(f'Error fetching {url}: {str(e)}')
             raise
     
     def get_all_pokemon(self, limit: Optional[int] = 5) -> List[Dict[str, Any]]:
@@ -91,12 +91,12 @@ class PokeAPIExtractor:
             data = self._make_request(f"{self.ENDPOINTS['pokemon']}?{httpx.QueryParams(params)}")
             return data['results']
         except Exception as e:
-            logger.error(f"Failed to get Pokemon list: {str(e)}")
+            logger.error(f'Failed to get Pokemon list: {str(e)}')
             raise
     
     def get_pokemon_data(self, pokemon_id: int) -> Dict[str, Any]:
         try:
-            logger.info(f"Fetching data for Pokemon #{pokemon_id}")
+            logger.info(f'Fetching data for Pokemon #{pokemon_id}')
             
             pokemon_data = self._make_request(f"{self.ENDPOINTS['pokemon']}/{pokemon_id}")
             species_data = self._make_request(f"{self.ENDPOINTS['species']}/{pokemon_id}")
@@ -104,7 +104,7 @@ class PokeAPIExtractor:
             evolution_url = species_data['evolution_chain']['url']
             evolution_id = self._extract_id(evolution_url)
             if not evolution_id:
-                raise ValueError(f"Invalid evolution chain URL: {evolution_url}")
+                raise ValueError(f'Invalid evolution chain URL: {evolution_url}')
             
             evolution_data = self._make_request(f"{self.ENDPOINTS['evolution']}/{evolution_id}")
             # move details (with batch processing)
@@ -118,7 +118,7 @@ class PokeAPIExtractor:
             }
             
         except Exception as e:
-            logger.error(f"Failed to get Pokemon #{pokemon_id} data: {str(e)}")
+            logger.error(f'Failed to get Pokemon #{pokemon_id} data: {str(e)}')
             raise
     
     def _get_move_details(self, moves: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -135,5 +135,5 @@ class PokeAPIExtractor:
                     }]
             return []
         except Exception as e:
-            logger.error(f"Error fetching move data: {str(e)}")
+            logger.error(f'Error fetching move data: {str(e)}')
             return []

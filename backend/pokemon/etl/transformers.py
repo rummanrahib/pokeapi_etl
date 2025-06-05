@@ -41,16 +41,16 @@ class PokemonDataTransformer:
                 'moves': moves_data
             }
             
-            logger.info(f"Successfully transformed data for Pokemon: {pokemon_data['name']}")
+            logger.info(f'Successfully transformed data for Pokemon: {pokemon_data["name"]}')
             return transformed_data
             
         except TransformationError as e:
-            logger.error(f"Transformation error in {e.field}: {e.message}")
+            logger.error(f'Transformation error in {e.field}: {e.message}')
             raise
         
         except Exception as e:
-            logger.error(f"Unexpected error transforming Pokemon data: {e}")
-            raise TransformationError(message=str(e), data=raw_data, field="complete_data")
+            logger.error(f'Unexpected error transforming Pokemon data: {e}')
+            raise TransformationError(message=str(e), data=raw_data, field='complete_data')
     
     def _validate_raw_data(self, data: Dict[str, Any]) -> None:
         required_keys = {'pokemon', 'species', 'evolution_chain', 'moves'}
@@ -58,9 +58,9 @@ class PokemonDataTransformer:
         
         if missing_keys:
             raise TransformationError(
-                message=f"Missing required data: {missing_keys}",
+                message=f'Missing required data: {missing_keys}',
                 data=data,
-                field="raw_data"
+                field='raw_data'
             )
     
     def _transform_pokemon(self, data: Dict[str, Any]) -> Dict[str, Any]:
@@ -97,10 +97,10 @@ class PokemonDataTransformer:
     def _validate_pokemon_data(self, data: Dict[str, Any]) -> None:
         for field, field_type in self.REQUIRED_POKEMON_FIELDS.items():
             if field not in data:
-                raise TransformationError(message=f"Missing required field: {field}", data=data, field="pokemon_validation")
+                raise TransformationError(message=f'Missing required field: {field}', data=data, field='pokemon_validation')
             
             if not isinstance(data[field], field_type):
-                raise TransformationError(message=f"Invalid type for {field}. Expected {field_type.__name__}", data=data, field="pokemon_validation")
+                raise TransformationError(message=f'Invalid type for {field}. Expected {field_type.__name__}', data=data, field='pokemon_validation')
     
     def _transform_stats(self, stats_data: List[Dict[str, Any]]) -> Dict[str, int]:
         stats = {}
@@ -111,7 +111,7 @@ class PokemonDataTransformer:
         
         missing_stats = set(self.REQUIRED_STATS) - {s.replace('_', '-') for s in stats.keys()}
         if missing_stats:
-            logger.warning(f"Missing stats: {missing_stats}. Using default value 0.")
+            logger.warning(f'Missing stats: {missing_stats}. Using default value 0.')
             for stat in missing_stats:
                 stats[stat.replace('-', '_')] = 0
         
@@ -119,7 +119,7 @@ class PokemonDataTransformer:
     
     def _validate_url(self, url: str) -> str:
         if url and not url.startswith(('http://', 'https://')):
-            logger.warning(f"Invalid URL format: {url}")
+            logger.warning(f'Invalid URL format: {url}')
             return ''
         return url
     
@@ -133,7 +133,7 @@ class PokemonDataTransformer:
                     'slot': int(type_data['slot'])
                 })
             except (KeyError, ValueError) as e:
-                logger.warning(f"Invalid type data: {e}")
+                logger.warning(f'Invalid type data: {e}')
                 continue
         
         return sorted(transformed_types, key=lambda x: x['slot'])
@@ -149,7 +149,7 @@ class PokemonDataTransformer:
                     'slot': int(ability_data['slot'])
                 })
             except (KeyError, ValueError) as e:
-                logger.warning(f"Invalid ability data: {e}")
+                logger.warning(f'Invalid ability data: {e}')
                 continue
         
         return sorted(transformed_abilities, key=lambda x: x['slot'])
@@ -167,19 +167,19 @@ class PokemonDataTransformer:
                 'is_mythical': bool(data['is_mythical'])
             }
         except Exception as e:
-            raise TransformationError(message=str(e), data=data, field="species")
+            raise TransformationError(message=str(e), data=data, field='species')
     
     def _transform_evolution_chain(self, data: Dict[str, Any]) -> Dict[str, Any]:
         try:
             if 'id' not in data or 'chain' not in data:
-                raise TransformationError(message="Missing required evolution chain data", data=data, field="evolution_chain")
+                raise TransformationError(message='Missing required evolution chain data', data=data, field='evolution_chain')
             
             return {
                 'chain_id': int(data['id']),
                 'chain_data': data['chain']
             }
         except Exception as e:
-            raise TransformationError(message=str(e), data=data, field="evolution_chain")
+            raise TransformationError(message=str(e), data=data, field='evolution_chain')
     
     def _transform_moves(self, moves_data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         transformed_moves = []
@@ -209,7 +209,7 @@ class PokemonDataTransformer:
                     'version_group': learn_details['version_group']['name']
                 })
             except (KeyError, IndexError) as e:
-                logger.warning(f"Invalid move data: {e}")
+                logger.warning(f'Invalid move data: {e}')
                 continue
         
         return transformed_moves

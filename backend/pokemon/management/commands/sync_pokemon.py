@@ -66,14 +66,14 @@ class Command(BaseCommand):
             
             self._show_results(stats)
             
-            return self.style.SUCCESS("Pokemon data synchronization completed successfully!")
+            return self.style.SUCCESS('Pokemon data synchronization completed successfully!')
         except ETLError as e:
-            logger.error(f"ETL process failed: {e}")
-            raise CommandError(f"Synchronization failed: {e}")
+            logger.error(f'ETL process failed: {e}')
+            raise CommandError(f'Synchronization failed: {e}')
             
         except Exception as e:
-            logger.error(f"Unexpected error: {e}", exc_info=True)
-            raise CommandError(f"Unexpected error: {e}")
+            logger.error(f'Unexpected error: {e}', exc_info=True)
+            raise CommandError(f'Unexpected error: {e}')
             
         finally:
             connection.close()
@@ -96,8 +96,8 @@ class Command(BaseCommand):
             root_logger.addHandler(handler)
     
     def _show_configuration(self, options: dict) -> None:
-        config_msg = "\nConfiguration:"
-        config_msg += f"\n- Limit: {options['limit'] or 'All'}"
+        config_msg = '\nConfiguration:'
+        config_msg += f"\n- Limit: {options['limit'] or 20}"
         config_msg += f"\n- Batch Size: {options['batch_size']}"
         config_msg += f"\n- Workers: {options['workers']}"
         config_msg += f"\n- Retry on Failed: {not options['skip_retry']}"
@@ -111,14 +111,14 @@ class Command(BaseCommand):
         success_rate = (stats.successful / stats.total_processed * 100) if stats.total_processed > 0 else 0
         
         # build results message
-        results_msg = "\nResults:"
-        results_msg += f"\n- Total Processed: {stats.total_processed}"
-        results_msg += f"\n- Successful: {stats.successful}"
-        results_msg += f"\n- Failed: {stats.failed}"
-        results_msg += f"\n- Success Rate: {success_rate:.2f}%"
+        results_msg = '\nResults:'
+        results_msg += f'\n- Total Processed: {stats.total_processed}'
+        results_msg += f'\n- Successful: {stats.successful}'
+        results_msg += f'\n- Failed: {stats.failed}'
+        results_msg += f'\n- Success Rate: {success_rate:.2f}%'
         
         if stats.failed_ids:
-            results_msg += f"\n- Failed Pokemon IDs: {sorted(stats.failed_ids)}"
+            results_msg += f'\n- Failed Pokemon IDs: {sorted(stats.failed_ids)}'
         
         if success_rate == 100:
             self.stdout.write(self.style.SUCCESS(results_msg))
