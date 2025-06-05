@@ -113,9 +113,6 @@ docker-compose up -d
 # Check if services are running
 docker-compose ps
 
-# Wait for database to be ready (important for first run)
-docker-compose exec backend python manage.py wait_for_db
-
 # Run migrations
 docker-compose exec backend python manage.py migrate
 
