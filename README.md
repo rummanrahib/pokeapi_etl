@@ -91,18 +91,20 @@ git clone https://github.com/rummanrahib/pokeapi_etl.git
 cd pokeapi_etl
 
 # Create environment file
-cat > backend/.env << EOL
+cd backend
+touch .env
+
+# Edit the .env file
+nano .env
+
+# Add the following variables
 DEBUG=False
-SECRET_KEY=your-secret-key
-DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
-SQL_ENGINE=django.db.backends.postgresql
-SQL_DATABASE=pokemon_db
-SQL_USER=postgres
-SQL_PASSWORD=postgres
-SQL_HOST=db
-SQL_PORT=5432
-EOL
-```
+ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+DB_NAME=pokemon_db
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_HOST=db
+DB_PORT=5432
 
 ### Running the Project
 ```bash
