@@ -9,7 +9,7 @@ class Type(models.Model):
     name: str = models.CharField(max_length=50, unique=True, db_index=True)
     
     def __str__(self) -> str:
-        return self.name
+        return self.name.title()
 
 
 class Ability(models.Model):
@@ -22,7 +22,7 @@ class Ability(models.Model):
         verbose_name_plural = 'Abilities'
     
     def __str__(self) -> str:
-        return self.name
+        return self.name.title()
 
 
 class EvolutionChain(models.Model):
@@ -102,7 +102,7 @@ class PokemonSpecies(models.Model):
         verbose_name_plural = 'Pokemon Species'
     
     def __str__(self) -> str:
-        return f'{self.pokemon.name} Species'
+        return f'{self.pokemon.name.title()} Species'
 
 
 # Represents a move/attack that can be learned by Pokémon
@@ -121,7 +121,7 @@ class Move(models.Model):
     description: str = models.TextField(blank=True)
     
     def __str__(self) -> str:
-        return self.name
+        return self.name.title()
 
 
 # Represents how a Pokémon learns a specific move
@@ -146,4 +146,4 @@ class PokemonMove(models.Model):
         verbose_name_plural = 'Pokemon Moves'   
     
     def __str__(self) -> str:
-        return f'{self.pokemon.name} | {self.move.name} | {self.learn_method}'
+        return f'{self.pokemon.name.title()} | {self.move.name.title()} | {self.learn_method}'

@@ -12,7 +12,6 @@ from .models import (
 
 
 class PokemonAdmin(admin.ModelAdmin):
-    list_display = ('name', 'pokedex_id')
     search_fields = ('name',)
     list_filter = ('types',)
     ordering = ('pokedex_id',)
