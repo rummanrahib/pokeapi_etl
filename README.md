@@ -17,7 +17,7 @@ This project implements a data pipeline that:
 - Transforms the nested API responses into a normalized structure
 - Loads the data into a PostgreSQL database
 - Provides a comprehensive Django [admin](http://localhost:8000/admin/) interface to manage the data
-- (Future) Provides REST API endpoints to access the stored data
+- (Future) Integrates REST and GraphQL API endpoints to access the stored data
 - (Future) Includes a NextJS frontend for data visualization
 
 ## Architecture
