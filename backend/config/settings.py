@@ -58,7 +58,7 @@ MIDDLEWARE = [
 ]
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True  # Only for development
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Next.js frontend
 ]
